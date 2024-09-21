@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import List
 from langchain.prompts import ChatPromptTemplate
 from langchain_aws import ChatBedrock
+from langchain_openai import ChatOpenAI
 from rag_app.get_chroma_db import get_chroma_db
 
 PROMPT_TEMPLATE = """
@@ -34,7 +35,13 @@ def query_rag(query_text: str) -> QueryResponse:
     prompt = prompt_template.format(context=context_text, question=query_text)
     print(prompt)
 
-    model = ChatBedrock(model_id=BEDROCK_MODEL_ID)
+    # Using Amazon Bedrock model.
+    # model = ChatBedrock(model_id=BEDROCK_MODEL_ID)
+
+    # Using OpenAI model via API.
+    model = ChatOpenAI(
+        model="gpt-4o-mini",
+    )
     response = model.invoke(prompt)
     response_text = response.content
 

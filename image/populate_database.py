@@ -5,13 +5,13 @@ from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
 from langchain_community.vectorstores import Chroma
-
+from dotenv import load_dotenv
 from src.rag_app.get_embedding_function import get_embedding_function
 
 
 CHROMA_PATH = "src/data/chroma"
 DATA_SOURCE_PATH = "src/data/source"
-
+load_dotenv()
 
 def main():
 
@@ -37,7 +37,7 @@ def load_documents():
 def split_documents(documents: list[Document]):
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=600,
-        chunk_overlap=120,
+        chunk_overlap=250,
         length_function=len,
         is_separator_regex=False,
     )
@@ -52,8 +52,8 @@ def add_to_chroma(chunks: list[Document]):
 
     # Calculate Page IDs.
     chunks_with_ids = calculate_chunk_ids(chunks)
-    for chunk in chunks:
-        print(f"Chunk Page Sample: {chunk.metadata['id']}\n{chunk.page_content}\n\n")
+    # for chunk in chunks:
+    #     print(f"Chunk Page Sample: {chunk.metadata['id']}\n{chunk.page_content}\n\n")
 
     # Add or Update the documents.
     existing_items = db.get(include=[])  # IDs are always included by default

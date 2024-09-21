@@ -8,3 +8,5 @@ original_reqs.txt
 filtered_reqs.txt
 pip_freeze.txt
 generate_reqs.py
+ragchatbotvenv*
+data*
