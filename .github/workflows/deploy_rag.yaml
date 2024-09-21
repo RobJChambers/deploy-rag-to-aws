@@ -18,14 +18,14 @@ jobs:
         with:
           node-version: '18'
 
-        - name: Install CDK dependencies
-          working-directory: ./rag-cdk-infra
-          run: npm ci
+      - name: Install CDK dependencies
+        working-directory: ./rag-cdk-infra
+        run: npm ci
 
-        - name: Deploy RAG app to AWS
-          working-directory: ./rag-cdk-infra
-          run: npx cdk deploy --require-approval never
-          env:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_REGION: ${{ secrets.AWS_REGION }}
+      - name: Deploy RAG app to AWS
+        working-directory: ./rag-cdk-infra
+        run: npx cdk deploy --require-approval never
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
