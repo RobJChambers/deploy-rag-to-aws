@@ -4,6 +4,7 @@ from langchain.prompts import ChatPromptTemplate
 from langchain_aws import ChatBedrock
 from langchain_openai import ChatOpenAI
 from rag_app.get_chroma_db import get_chroma_db
+import os
 
 PROMPT_TEMPLATE = """
 Answer the question based only on the following context:
@@ -16,6 +17,8 @@ Answer the question based on the above context: {question}
 """
 
 BEDROCK_MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
+
+openai_api_key = os.getenv('OPENAI_API_KEY')
 
 
 @dataclass
@@ -30,7 +33,8 @@ def query_rag(query_text: str) -> QueryResponse:
 
     # Search the DB.
     results = db.similarity_search_with_score(query_text, k=3)
-    context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
+    context_text = "\n\n---\n\n".join(
+        [doc.page_content for doc, _score in results])
     prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     prompt = prompt_template.format(context=context_text, question=query_text)
     print(prompt)
@@ -41,6 +45,7 @@ def query_rag(query_text: str) -> QueryResponse:
     # Using OpenAI model via API.
     model = ChatOpenAI(
         model="gpt-4o-mini",
+        api_key=openai_api_key,
     )
     response = model.invoke(prompt)
     response_text = response.content
