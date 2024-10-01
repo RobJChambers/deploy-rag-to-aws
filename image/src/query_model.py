@@ -32,7 +32,7 @@ class QueryModel(BaseModel):
             raise e
 
     def as_ddb_item(self):
-        item = {k: v for k, v in self.dict().items() if v is not None}
+        item = {k: v for k, v in self.model_dump().items() if v is not None}
         return item
 
     @classmethod
