@@ -2,8 +2,9 @@ import os
 import uvicorn
 import boto3
 import json
+import logging
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 from pydantic import BaseModel
@@ -11,13 +12,21 @@ from query_model import QueryModel
 from rag_app.query_rag import query_rag
 
 WORKER_LAMBDA_NAME = os.environ.get("WORKER_LAMBDA_NAME", None)
+# Logger
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 app = FastAPI()
 
 # Add CORS middleware
+# Define allowed origins
+allowed_origins = [
+    "http://localhost:3000",  # Your local React app
+    "https://dapn6nz9gslti.cloudfront.net",  # Your production domain
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins in development, restrict this in production
+    allow_origins=allowed_origins,  # Allows all origins in development, restrict this in production
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
@@ -37,12 +46,22 @@ def index():
 
 @app.get("/get_query")
 def get_query_endpoint(query_id: str) -> QueryModel:
-    query = QueryModel.get_item(query_id)
-    return query
+       try:
+           logger.info(f"Received request for query_id: {query_id}")
+           query = QueryModel.get_item(query_id)
+           logger.info(f"Retrieved query: {query}")
+           if not query:
+               raise HTTPException(status_code=404, detail="Query not found")
+           return query
+       except Exception as e:
+           logger.error(f"Error retrieving query: {str(e)}")
+           raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.post("/submit_query")
 def submit_query_endpoint(request: SubmitQueryRequest) -> QueryModel:
+    # Logging 
+    logger.info(f"Incoming request: {request.query_text}")
     # Create the query item, and put it into the data-base.
     new_query = QueryModel(query_text=request.query_text)
 
