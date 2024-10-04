@@ -19,18 +19,18 @@ logger.setLevel(logging.INFO)
 app = FastAPI()
 
 # Add CORS middleware
-# Define allowed origins
-allowed_origins = [
-    "http://localhost:3000",  # Your local React app
-    "https://dapn6nz9gslti.cloudfront.net",  # Your production domain
-]
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=allowed_origins,  # Allows all origins in development, restrict this in production
-    allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
-)
+# # Define allowed origins
+# allowed_origins = [
+#     "http://localhost:3000",  # Your local React app
+#     "https://dapn6nz9gslti.cloudfront.net",  # Your production domain
+# ]
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=allowed_origins,  # Allows all origins in development, restrict this in production
+#     allow_credentials=True,
+#     allow_methods=["*"],  # Allows all methods
+#     allow_headers=["*"],  # Allows all headers
+# )
 
 handler = Mangum(app)  # Entry point for AWS Lambda.
 
