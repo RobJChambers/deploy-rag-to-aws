@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-
+      - Chat-Context
 jobs:
   deploy:
     runs-on: ubuntu-latest
