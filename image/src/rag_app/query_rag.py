@@ -5,7 +5,7 @@ from langchain_aws import ChatBedrock
 from langchain_openai import ChatOpenAI
 from rag_app.get_chroma_db import get_chroma_db
 import os
-from src.open_ai_assistant import AIAssistant
+from open_ai_assistant import AIAssistant
 
 PROMPT_TEMPLATE = """
 Answer the question based only on the following context:
@@ -27,7 +27,7 @@ assistant = AIAssistant(openai_api_key, assistant_id_key)
 class QueryResponse:
     query_text: str
     response_text: str
-    thread_id: str = None
+    thread_id: str
     sources: List[str]
 
 
