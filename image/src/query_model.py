@@ -13,6 +13,7 @@ class QueryModel(BaseModel):
     query_id: str = Field(default_factory=lambda: uuid.uuid4().hex)
     create_time: int = Field(default_factory=lambda: int(time.time()))
     query_text: str
+    thread_id: str = None
     answer_text: Optional[str] = None
     sources: List[str] = Field(default_factory=list)
     is_complete: bool = False

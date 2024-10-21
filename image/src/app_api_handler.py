@@ -37,7 +37,7 @@ handler = Mangum(app)  # Entry point for AWS Lambda.
 
 class SubmitQueryRequest(BaseModel):
     query_text: str
-
+    thread_id: str = None
 
 @app.get("/")
 def index():
@@ -63,7 +63,7 @@ def submit_query_endpoint(request: SubmitQueryRequest) -> QueryModel:
     # Logging 
     logger.info(f"Incoming request: {request.query_text}")
     # Create the query item, and put it into the data-base.
-    new_query = QueryModel(query_text=request.query_text)
+    new_query = QueryModel(query_text=request.query_text, thread_id=request.thread_id)
 
     if WORKER_LAMBDA_NAME:
         # Make an async call to the worker (the RAG/AI app).
@@ -71,8 +71,9 @@ def submit_query_endpoint(request: SubmitQueryRequest) -> QueryModel:
         invoke_worker(new_query)
     else:
         # Make a synchronous call to the worker (the RAG/AI app).
-        query_response = query_rag(request.query_text)
+        query_response = query_rag(request.query_text, request.thread_id)
         new_query.answer_text = query_response.response_text
+        new_query.thread_id = query_response.thread_id
         new_query.sources = query_response.sources
         new_query.is_complete = True
         new_query.put_item()
