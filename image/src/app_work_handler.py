@@ -8,9 +8,10 @@ def handler(event, context):
 
 
 def invoke_rag(query_item: QueryModel):
-    rag_response = query_rag(query_item.query_text)
+    rag_response = query_rag(query_item.query_text, query_item.thread_id)
     query_item.answer_text = rag_response.response_text
     query_item.sources = rag_response.sources
+    query_item.thread_id = rag_response.thread_id
     query_item.is_complete = True
     query_item.put_item()
     print(f"✅ Item is updated: {query_item}")
